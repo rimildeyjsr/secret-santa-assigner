@@ -12,18 +12,26 @@ const firebaseConfig = {
   appId: "1:873288072798:web:04b60d8e043bc1dd89fecf"
 };
 
-firebase.initializeApp(firebaseConfig);
+if (!firebase.apps.length) {
+  firebase.initializeApp(firebaseConfig);
+}
 const db = firebase.firestore();
 
-export const authenticateUser = () => {
-  var provider = new firebase.auth.GoogleAuthProvider();
-  firebase.auth().signInWithPopup(provider).then(function(result) {
-    console.log(checkIfUserHasAccess(result.user.email));
-  }).catch(function(error) {
-    console.log(error);
+export const onAuthStateChange = (callback) => {
+  return firebase.auth().onAuthStateChanged(user => {
+    if (user) {
+      callback({loggedIn: true});
+    } else {
+      callback({loggedIn: false});
+    }
   });
 };
 
-const checkIfUserHasAccess = (userEmail) => {
-  return userEmail.includes('@springboard.com');
+export const loginUser = () => {
+  const provider = new firebase.auth.GoogleAuthProvider();
+  return firebase.auth().signInWithPopup(provider);
+};
+
+export const logoutUser = () => {
+  return firebase.auth().signOut();
 };
