@@ -3,7 +3,7 @@ import React from "react";
 
 export const LogoutView = ({onClick, error}) => {
   return (
-    <>
+    <div className="logout-view-container center-flex-display">
       <button onClick={onClick}>
         Logout
       </button>
@@ -11,6 +11,6 @@ export const LogoutView = ({onClick, error}) => {
       <span>
         {error}
       </span>
-    </>
+    </div>
   )
 };

@@ -1,11 +1,11 @@
 import React, {useState, useEffect, useCallback} from 'react';
-import {LoginView} from "./pages/LoginView";
-import {LogoutView} from "./pages/LogoutView";
 import * as FirestoreService from "./services/firebase";
+import {ProfileView} from "./pages/ProfileView";
+import {Header} from "./components/Header";
 import './App.scss';
 
 const defaultUser = { loggedIn: false };
-const UserContext = React.createContext(defaultUser);
+export const UserContext = React.createContext(defaultUser);
 const UserProvider = UserContext.Provider;
 
 function App() {
@@ -22,7 +22,12 @@ function App() {
   const requestLogin = useCallback(() => {
     FirestoreService.loginUser()
       .then( (result) => {
-        console.log(checkIfUserHasAccess(result.user.email));
+        if(checkIfUserHasAccess(result.user.email)) {
+          setUser({loggedIn: true, ...result.user});
+          console.log({loggedIn: true, ...result.user});
+        } else {
+          setError('Use a Springboard account to log in');
+        }
       })
       .catch(error =>
         setError(`Error Code ${error.code}: There was an error while trying to log in. Try again later!`)
@@ -42,22 +47,21 @@ function App() {
 
   return (
     <UserProvider value={user}>
-      <h1>
-        Secret Santa Organiser
-      </h1>
-      {
-        user.loggedIn
-        ?
-          <LogoutView
-            onClick={requestLogout}
-            error={error}
-          />
-        :
-          <LoginView
-            onClick={requestLogin}
-            error={error}
-          />
-      }
+      <div className="app-container center-flex-display">
+        <Header
+          requestLogin={requestLogin}
+          requestLogout={requestLogout}
+          error={error}
+        />
+
+        {
+          user.loggedIn && user.email
+            ?
+            <ProfileView/>
+            :
+            null
+        }
+      </div>
     </UserProvider>
   );
 }

@@ -2,7 +2,7 @@ import './loginView.scss';
 
 export const LoginView = ({onClick, error}) => {
   return (
-    <div className="login-page-container">
+    <div className="login-page-container center-flex-display">
       <p>
         Login with your Springboard email id
       </p>
